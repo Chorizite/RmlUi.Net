@@ -20,8 +20,6 @@ jobs:
       - name: Determine Version
         id: version_step # step id used as reference for output values
         uses: gittools/actions/gitversion/execute@v3.1.2
-        with:
-          versionSpec: '6.0.x'
 
       - run: dotnet restore               # install packages
       - run: dotnet build -c Release --no-restore    # build
