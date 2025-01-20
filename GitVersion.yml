@@ -1,6 +1,8 @@
 next-version: 1.0.0
 tag-prefix: '[vV]?'
 assembly-versioning-scheme: Major
+prevent-increment:
+    of-merged-branch: true
 branches:
   main:
     label: beta
