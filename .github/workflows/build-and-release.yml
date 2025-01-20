@@ -30,7 +30,7 @@ jobs:
         if: success() || failure()        # run this step even if previous step failed
         with: 
           name: packages
-          path: "${{ github.workspace }}/RmlUI.Net/bin/Release/RmlUI.Net.${{ env.GitVersion_FullSemVer }}.nupkg"
+          path: "${{ github.workspace }}/bin/Release/RmlUI.Net.${{ env.GitVersion_FullSemVer }}.nupkg"
 
       - run: dotnet nuget add source --username USERNAME --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/Chorizite/index.json"
-      - run: dotnet nuget push "${{ github.workspace }}/RmlUI.Net/bin/Release/RmlUI.Net.${{ env.GitVersion_FullSemVer }}.nupkg" --api-key ${{ secrets.CI_NUGET_API_KEY }} --source "github"
+      - run: dotnet nuget push "${{ github.workspace }}/bin/Release/RmlUI.Net.${{ env.GitVersion_FullSemVer }}.nupkg" --api-key ${{ secrets.CI_NUGET_API_KEY }} --source "github"
