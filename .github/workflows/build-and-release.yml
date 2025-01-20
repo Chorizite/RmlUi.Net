@@ -29,7 +29,6 @@ jobs:
         with: 
           name: packages
           path: "${{ github.workspace }}/RmlUi.Net/bin/Release/RmlUi.Net.${{ env.GitVersion_FullSemVer }}.nupkg"
-
-      - run: dotnet nuget add source --username trevis --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/Chorizite/index.json"
+      - run: dotnet nuget add source --username Chorizite --password ${{ secrets.CI_NUGET_API_KEY }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/Chorizite/index.json"
       - run: dotnet nuget push "${{ github.workspace }}/RmlUi.Net/bin/Release/RmlUi.Net.${{ env.GitVersion_FullSemVer }}.nupkg" --api-key ${{ secrets.CI_NUGET_API_KEY }} --source "github"
   
