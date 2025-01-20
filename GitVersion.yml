@@ -1,28 +1,6 @@
-next-version: 0.1.0
-mode: ContinuousDeployment
-tag-prefix: 'v'
+next-version: 1.0.0
+tag-prefix: '[vV]?'
+assembly-versioning-scheme: Major
 branches:
   main:
-    regex: ^master$|^main$
-    mode: ContinuousDeployment
-    tag: 'beta'
-    increment: Patch
-    prevent-increment-of-merged-branch-version: true
-    track-merge-target: false
-    source-branches: [ 'release' ]
-    tracks-release-branches: false
-    is-release-branch: true
-    is-mainline: true
-    pre-release-weight: 55000
-  release:
-    regex: ^release$
-    mode: ContinuousDelivery
-    tag: ''
-    increment: Patch
-    prevent-increment-of-merged-branch-version: true
-    track-merge-target: false
-    source-branches: [ 'develop', 'main', 'master', 'support', 'release' ]
-    tracks-release-branches: true
-    is-release-branch: true
-    is-mainline: false
-    pre-release-weight: 30000
+    label: beta
