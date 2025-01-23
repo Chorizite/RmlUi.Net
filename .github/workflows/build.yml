@@ -22,7 +22,7 @@ jobs:
         uses: gittools/actions/gitversion/execute@v3.1.2
 
       - run: dotnet restore               # install packages
-      - run: git log --pretty=format:"%s%b" --no-merges $(git describe --tags --abbrev=0 @^)..@ | sed '/^[[:space:]]*$/d' > changelog.md
+      - run: git log --pretty=format:"%s%n%b" --no-merges $(git describe --tags --abbrev=0 @^)..@ | sed '/^[[:space:]]*$/d' > changelog.md
       - run: cat changelog.md
       - run: dotnet build -c Release --no-restore -p:PackageReleaseNotes="$(cat changelog.md 2>/dev/null)"   # build
       - uses: actions/upload-artifact@v4  # upload test results
