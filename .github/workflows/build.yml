@@ -1,10 +1,10 @@
-name: 'Build and Release'
+name: 'Build'
 on:
   push:
     branches:
     - master
 jobs:
-  build-test-release:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

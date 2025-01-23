@@ -1,5 +1,5 @@
 next-version: 1.0.0
-tag-prefix: '[vV]?'
+tag-prefix: '(release\/)?'
 assembly-versioning-scheme: Major
 branches:
   main:
