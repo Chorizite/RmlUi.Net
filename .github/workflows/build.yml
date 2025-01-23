@@ -34,7 +34,7 @@ jobs:
         
       - uses: actions/upload-artifact@v4
         with: 
-          name: "${{ github.workspace }}/RmlUi.Net/bin/Release/RmlUi.Net.${{ env.GitVersion_FullSemVer }}.nupkg"
+          name: "RmlUi.Net.${{ env.GitVersion_FullSemVer }}.nupkg"
           path: "${{ github.workspace }}/RmlUi.Net/bin/Release/RmlUi.Net.${{ env.GitVersion_FullSemVer }}.nupkg"
 
       - uses: actions/upload-artifact@v4
