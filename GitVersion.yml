@@ -1,8 +1,7 @@
 next-version: 1.0.0
-tag-prefix: '[vV]?'
+tag-prefix: '^(release\/)?'
 assembly-versioning-scheme: Major
 branches:
   main:
     label: beta
-    prevent-increment:
-        of-merged-branch: true
+    increment: Patch
