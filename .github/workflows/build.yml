@@ -20,16 +20,30 @@ jobs:
       - name: Determine Version
         id: version_step # step id used as reference for output values
         uses: gittools/actions/gitversion/execute@v3.1.2
+        
+      - name: Make Changelog
+        run: |
+          git log --pretty=format:"%s%n%b" --no-merges $(git describe --tags --abbrev=0 @^)..@ | sed '/^[[:space:]]*$/d' > changelog.md
+          cat changelog.md
 
-      - run: dotnet restore               # install packages
-      - run: git log --pretty=format:"%s%n%b" --no-merges $(git describe --tags --abbrev=0 @^)..@ | sed '/^[[:space:]]*$/d' > changelog.md
-      - run: cat changelog.md
-      - run: dotnet build -c Release --no-restore -p:PackageReleaseNotes="$(cat changelog.md 2>/dev/null)"   # build
-      - uses: actions/upload-artifact@v4  # upload test results
-        if: success() || failure()        # run this step even if previous step failed
+      - name: Build
+        run: |
+          dotnet restore               # install packages
+          dotnet build -c Release --no-restore -p:PackageReleaseNotes="$(cat changelog.md 2>/dev/null)"   # build
+          zip RmlUi.Net-${{ env.GitVersion_FullSemVer }}.zip "${{ github.workspace }}/RmlUi.Net/bin/Release/net8.0/"
+        
+      - uses: actions/upload-artifact@v4
         with: 
           name: packages
           path: "${{ github.workspace }}/RmlUi.Net/bin/Release/RmlUi.Net.${{ env.GitVersion_FullSemVer }}.nupkg"
-      - run: dotnet nuget add source --username Chorizite --password ${{ secrets.CI_NUGET_API_KEY }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/Chorizite/index.json"
-      - run: dotnet nuget push "${{ github.workspace }}/RmlUi.Net/bin/Release/RmlUi.Net.${{ env.GitVersion_FullSemVer }}.nupkg" --api-key ${{ secrets.CI_NUGET_API_KEY }} --source "github"
-  
+
+      - uses: actions/upload-artifact@v4
+        with: 
+          name: binaries
+          path: "RmlUi.Net-${{ env.GitVersion_FullSemVer }}.zip"
+
+      - name: Push NuGet Package
+        run: |
+          dotnet nuget add source --username Chorizite --password ${{ secrets.CI_NUGET_API_KEY }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/Chorizite/index.json"
+          dotnet nuget push "${{ github.workspace }}/RmlUi.Net/bin/Release/RmlUi.Net.${{ env.GitVersion_FullSemVer }}.nupkg" --api-key ${{ secrets.CI_NUGET_API_KEY }} --source "github"
+      
