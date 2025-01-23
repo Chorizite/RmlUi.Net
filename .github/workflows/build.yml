@@ -22,9 +22,9 @@ jobs:
         uses: gittools/actions/gitversion/execute@v3.1.2
 
       - run: dotnet restore               # install packages
-      - run: git log --oneline $(git describe --tags --abbrev=0 @^)..@ | sed '/Merge/d' > changelog.md
+      - run: git log --oneline $(git describe --tags --abbrev=0 @^)..@ > changelog.md
       - run: changelog=$(cat changelog.md 2>/dev/null) || true
-      - run: echo $changelog
+      - run: cat changelog.md
       - run: dotnet build -c Release --no-restore -p:PackageReleaseNotes="\"${changelog}\""   # build
       - uses: actions/upload-artifact@v4  # upload test results
         if: success() || failure()        # run this step even if previous step failed
