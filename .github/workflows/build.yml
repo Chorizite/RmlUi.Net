@@ -34,12 +34,12 @@ jobs:
         
       - uses: actions/upload-artifact@v4
         with: 
-          name: packages
+          name: "${{ github.workspace }}/RmlUi.Net/bin/Release/RmlUi.Net.${{ env.GitVersion_FullSemVer }}.nupkg"
           path: "${{ github.workspace }}/RmlUi.Net/bin/Release/RmlUi.Net.${{ env.GitVersion_FullSemVer }}.nupkg"
 
       - uses: actions/upload-artifact@v4
         with: 
-          name: binaries
+          name: "RmlUi.Net-${{ env.GitVersion_FullSemVer }}.zip"
           path: "RmlUi.Net-${{ env.GitVersion_FullSemVer }}.zip"
 
       - name: Push NuGet Package
