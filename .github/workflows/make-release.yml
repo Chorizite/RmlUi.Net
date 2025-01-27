@@ -19,6 +19,8 @@ jobs:
         uses: gittools/actions/gitversion/execute@v3.1.2
 
       - name: Generate release notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh api \
               --method POST \
