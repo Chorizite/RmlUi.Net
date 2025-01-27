@@ -33,7 +33,7 @@ jobs:
 
       - name: Create release tag
         run: |
-          git tag "release/${{ env.GitVersion_MajorMinorPatch }}" "$(cat release-notes.md 2>/dev/null)"
+          git tag -a "release/${{ env.GitVersion_MajorMinorPatch }}" -F release-notes.md
           git push origin "release/${{ env.GitVersion_MajorMinorPatch }}"
 
       - name: Build
