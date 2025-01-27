@@ -25,9 +25,6 @@ jobs:
         run: |
           dotnet restore                        # install packages
           dotnet build -c Release --no-restore  # build
-          cd "${{ github.workspace }}/RmlUi.Net/bin/Release/net8.0/"
-          zip -r "${{ github.workspace }}/RmlUi.Net.${{ env.GitVersion_FullSemVer }}.zip" ./*
-          cd "${{ github.workspace }}"
         
       - uses: actions/upload-artifact@v4
         with: 
@@ -36,7 +33,8 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with: 
-          path: "RmlUi.Net.${{ env.GitVersion_FullSemVer }}.zip"
+          name: "RmlUi.Net.${{ env.GitVersion_FullSemVer }}.zip"
+          path: "${{ github.workspace }}/RmlUi.Net/bin/Release/net8.0/"
 
       - name: Push NuGet Package
         run: |
