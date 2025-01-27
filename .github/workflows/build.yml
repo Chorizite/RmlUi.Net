@@ -26,7 +26,7 @@ jobs:
           dotnet restore                        # install packages
           dotnet build -c Release --no-restore  # build
           cd "${{ github.workspace }}/RmlUi.Net/bin/Release/net8.0/"
-          zip -r RmlUi.Net.${{ env.GitVersion_FullSemVer }}.zip ./*
+          zip -r "${{ github.workspace }}/RmlUi.Net.${{ env.GitVersion_FullSemVer }}.zip" ./*
           cd "${{ github.workspace }}"
         
       - uses: actions/upload-artifact@v4
