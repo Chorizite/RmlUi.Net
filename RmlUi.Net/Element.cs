@@ -178,6 +178,7 @@ namespace RmlUiNet
         /// <param name="inCapturePhase">True if the listener is to be attached to the capture phase, false for the bubble phase.</param>
         public void AddEventListener(string name, EventListener eventListener, bool inCapturePhase = false)
         {
+            if (string.IsNullOrEmpty(name)) throw new ArgumentNullException("name");
             Native.Element.AddEventListener(NativePtr, name, eventListener.NativePtr, inCapturePhase);
         }
 
@@ -193,6 +194,7 @@ namespace RmlUiNet
 
             public void AddHandler(string eventName, Action<Event> handler)
             {
+                if (string.IsNullOrEmpty(eventName)) throw new ArgumentNullException("eventName");
                 if (!_handlers.TryGetValue(eventName.ToLower(), out var handlers))
                 {
                     handlers = new();
@@ -204,6 +206,7 @@ namespace RmlUiNet
 
             public void RemoveHandler(string eventName, Action<Event> handler)
             {
+                if (string.IsNullOrEmpty(eventName)) throw new ArgumentNullException("eventName");
                 if (_handlers.TryGetValue(eventName.ToLower(), out var handlers))
                 {
                     handlers.Remove(handler);
@@ -242,12 +245,14 @@ namespace RmlUiNet
 
         public void AddEventListener(string name, Action<Event> action)
         {
+            if (string.IsNullOrEmpty(name)) throw new ArgumentNullException("name");
             _listener ??= new ElementEventListener(this);
             _listener.AddHandler(name.ToLower(), action);
         }
 
         public void RemoveEventListener(string name, Action<Event> action)
         {
+            if (string.IsNullOrEmpty(name)) throw new ArgumentNullException("name");
             _listener?.RemoveHandler(name.ToLower(), action);
         }
 
@@ -259,11 +264,13 @@ namespace RmlUiNet
         /// <param name="inCapturePhase">True if the listener is to be attached to the capture phase, false for the bubble phase.</param>
         public void RemoveEventListener(string name, EventListener eventListener, bool inCapturePhase = false)
         {
+            if (string.IsNullOrEmpty(name)) throw new ArgumentNullException("name");
             Native.Element.RemoveEventListener(NativePtr, name, eventListener.NativePtr, inCapturePhase);
         }
 
         public bool DispatchEvent(string event_id, Dictionary<string, object> parameters, bool interruptible, bool bubbles)
         {
+            if (string.IsNullOrEmpty(event_id)) throw new ArgumentNullException("event_id");
             var dict = Native.RmlDictionary.Create();
             List<IntPtr> variants = [];
             try
@@ -297,6 +304,7 @@ namespace RmlUiNet
         /// <returns>The child of this element with the given ID, or null if no such child exists.</returns>
         public Element? GetElementById(string id)
         {
+            if (string.IsNullOrEmpty(id)) throw new ArgumentNullException("id");
             var nativeElementType = Native.Element.GetElementById(NativePtr, id, out var elementPtr);
             var elementType = Marshal.PtrToStringAnsi(nativeElementType);
 
@@ -310,11 +318,13 @@ namespace RmlUiNet
 
         public bool HasClass(string className)
         {
+            if (string.IsNullOrEmpty(className)) throw new ArgumentNullException("className");
             return Native.Element.HasClass(NativePtr, className);
         }
 
         public bool HasAttribute(string attributeName)
         {
+            if (string.IsNullOrEmpty(attributeName)) throw new ArgumentNullException("attributeName");
             return Native.Element.HasAttribute(NativePtr, attributeName);
         }
 
@@ -346,6 +356,7 @@ namespace RmlUiNet
         /// <returns></returns>
         public Element AppendChildTag(string tagName, bool addToDom = true)
         {
+            if (string.IsNullOrEmpty(tagName)) throw new ArgumentNullException("tagName");
             var nativeElement = Native.Element.AppendChildTag(NativePtr, tagName, addToDom);
             var typePtr = Native.Element.GetElementTypeName(nativeElement);
             var elementType = Marshal.PtrToStringAnsi(typePtr);
@@ -374,7 +385,7 @@ namespace RmlUiNet
         /// <param name="rml">The new content of the element.</param>
         public void SetInnerRml(string rml)
         {
-            Native.Element.SetInnerRml(NativePtr, rml);
+            Native.Element.SetInnerRml(NativePtr, rml ?? "");
         }
 
         /// <summary>
@@ -391,11 +402,13 @@ namespace RmlUiNet
 
         public void AddClass(string className)
         {
+            if (string.IsNullOrEmpty(className)) throw new ArgumentNullException("className");
             Native.Element.SetClass(NativePtr, className, true);
         }
 
         public void RemoveClass(string className)
         {
+            if (string.IsNullOrEmpty(className)) throw new ArgumentNullException("className");
             Native.Element.SetClass(NativePtr, className, false);
         }
 
@@ -456,6 +469,7 @@ namespace RmlUiNet
 
         public string GetProperty(string name)
         {
+            if (string.IsNullOrEmpty(name)) throw new ArgumentNullException("name");
             var strPtr = Native.Element.GetPropertyString(NativePtr, name);
             if (strPtr == IntPtr.Zero) return "";
 
@@ -466,12 +480,15 @@ namespace RmlUiNet
 
         public void SetProperty(string propertyName, string value)
         {
+            if (string.IsNullOrEmpty(propertyName)) throw new ArgumentNullException("propertyName");
+            if (string.IsNullOrEmpty(value)) throw new ArgumentNullException("value");
             Native.Element.SetProperty(NativePtr, propertyName, value);
         }
 
         /// <inheritdoc cref="Element.GetAttributeString(string, string)"/>
         public string GetAttribute(string attributeName)
         {
+            if (string.IsNullOrEmpty(attributeName)) throw new ArgumentNullException("attributeName");
             var strPtr = Native.Element.GetAttributeString(NativePtr, attributeName, "");
             if (strPtr == IntPtr.Zero) return "";
 
@@ -482,6 +499,8 @@ namespace RmlUiNet
 
         public void SetAttribute(string attributeName, string value)
         {
+            if (string.IsNullOrEmpty(attributeName)) throw new ArgumentNullException("attributeName");
+            if (string.IsNullOrEmpty(value)) throw new ArgumentNullException("value");
             Native.Element.SetAttributeString(NativePtr, attributeName, value);
         }
 
@@ -506,6 +525,7 @@ namespace RmlUiNet
 
         public Element? QuerySelector(string selector)
         {
+            if (string.IsNullOrEmpty(selector)) throw new ArgumentNullException("selector");
             var elementPtr = Native.Element.QuerySelector(NativePtr, selector);
             if (elementPtr == IntPtr.Zero) return null;
             var nativeElementType = Native.Element.GetElementTypeName(elementPtr);
@@ -521,6 +541,7 @@ namespace RmlUiNet
 
         public void RemoveAttribute(string prop)
         {
+            if (string.IsNullOrEmpty(prop)) throw new ArgumentNullException("prop");
             Native.Element.RemoveAttribute(NativePtr, prop);
         }
 
