@@ -1,0 +1,70 @@
+name: 'Make Release'
+on: workflow_dispatch
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v3.1.2
+        with:
+          versionSpec: '6.0.x'
+
+      - name: Determine Version
+        id: version_step
+        uses: gittools/actions/gitversion/execute@v3.1.2
+
+      - name: Generate release notes
+        run: |
+          gh api \
+              --method POST \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "/repos/$GITHUB_REPOSITORY/releases/generate-notes" \
+               -f "tag_name=release/$GitVersion_MajorMinorPatch" -f "target_commitish=master" \
+          | jq .body -r > release-notes.md
+
+      - name: Create release tag
+        run: |
+          git tag "release/${{ env.GitVersion_MajorMinorPatch }}" "$(cat release-notes.md 2>/dev/null)"
+          git push origin "release/${{ env.GitVersion_MajorMinorPatch }}"
+
+      - name: Build
+        run: |
+          dotnet restore                        # install packages
+          dotnet build -c Release --no-restore -p:PackageReleaseNotes="$(cat release-notes.md 2>/dev/null)"  # build
+        
+      - uses: actions/upload-artifact@v4
+        with: 
+          name: "RmlUi.Net.${{ env.GitVersion_FullSemVer }}.nupkg"
+          path: "${{ github.workspace }}/RmlUi.Net/bin/Release/RmlUi.Net.${{ env.GitVersion_FullSemVer }}.nupkg"
+
+      - uses: actions/upload-artifact@v4
+        with: 
+          name: "RmlUi.Net.${{ env.GitVersion_FullSemVer }}.zip"
+          path: "${{ github.workspace }}/RmlUi.Net/bin/Release/net8.0/"
+      
+      - name: Push GitHub NuGet Package
+        run: |
+          dotnet nuget add source --username Chorizite --password ${{ secrets.CI_NUGET_API_KEY }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/Chorizite/index.json"
+          dotnet nuget push "${{ github.workspace }}/RmlUi.Net/bin/Release/RmlUi.Net.${{ env.GitVersion_FullSemVer }}.nupkg" --api-key ${{ secrets.CI_NUGET_API_KEY }} --source "github"
+      
+      - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tag: release/${{ env.GitVersion_FullSemVer }}
+        run: |
+          gh release create "$tag" \
+              --repo="$GITHUB_REPOSITORY" \
+              --title="Release v${{ env.GitVersion_FullSemVer }}" \
+              --generate-notes \
+              "${{ github.workspace }}/RmlUi.Net/bin/Release/RmlUi.Net.${{ env.GitVersion_FullSemVer }}.nupkg#RmlUi.Net.${{ env.GitVersion_FullSemVer }}.nupkg"
+              
+      - name: Bump version
+        run: |
+          git commit --allow-empty -m "Bump version"
+          git push origin master
