@@ -31,6 +31,11 @@ jobs:
                -f "tag_name=release/$GitVersion_MajorMinorPatch" -f "target_commitish=master" \
           | jq .body -r > release-notes.md
 
+      - name: Git config
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
       - name: Create release tag
         run: |
           git tag -a "release/${{ env.GitVersion_MajorMinorPatch }}" -F release-notes.md
