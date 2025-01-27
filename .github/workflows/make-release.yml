@@ -45,7 +45,7 @@ jobs:
       - name: Build
         run: |
           dotnet restore                        # install packages
-          dotnet build -c Release --no-restore -p:PackageReleaseNotes="$(cat release-notes.md 2>/dev/null)"  # build
+          dotnet build -c Release --no-restore '-p:PackageReleaseNotes=$(cat release-notes.md 2>/dev/null)'  # build
         
       - uses: actions/upload-artifact@v4
         with: 
