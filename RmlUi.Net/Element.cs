@@ -2,6 +2,7 @@ using RmlUiNet.Native;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
 using static RmlUiNet.Native.VariableDefinition;
