@@ -7,8 +7,8 @@
 typedef Rml::FileHandle(*onOpen)(const char* path);
 typedef void(*onClose)(Rml::FileHandle file);
 typedef const char* (*onLoadFile)(const char* path);
-typedef size_t(*onRead)(uint8_t* buffer, size_t size, Rml::FileHandle file);
-typedef bool(*onSeek)(Rml::FileHandle file, long offset, int origin);
+typedef size_t(*onRead)(char* buffer, unsigned int size, Rml::FileHandle file);
+typedef bool(*onSeek)(Rml::FileHandle file, unsigned int offset, unsigned int origin);
 typedef size_t(*onTell)(Rml::FileHandle file);
 typedef size_t(*onLength)(Rml::FileHandle file);
 
@@ -50,13 +50,7 @@ public:
 	}
 
 	size_t Read(void* buffer, size_t size, Rml::FileHandle file) override {
-		uint8_t* bytes = static_cast<uint8_t*>(std::malloc(sizeof(uint8_t) * size));
-		size_t length = (*m_onRead)(bytes, size, file);
-
-		// shut up I know
-		memcpy(buffer, bytes, length);
-
-		return length;
+		return (*m_onRead)((char*)buffer, size, file);
 	}
 
 	bool Seek(Rml::FileHandle file, long offset, int origin) override {

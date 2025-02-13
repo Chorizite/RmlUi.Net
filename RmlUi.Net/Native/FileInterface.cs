@@ -16,24 +16,26 @@ namespace RmlUiNet.Native
             OnTell onTell,
             OnLength onLength
         );
-        
-        internal delegate ulong OnOpen(string path);
-        
-        internal delegate void OnClose(ulong file);
-        
-        internal unsafe delegate ulong OnRead(
-            //[MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 1)]
-            byte* buffer,
-            ulong size,
-            ulong file
-        );
-        
-        internal delegate bool OnSeek(ulong file, long offset, int origin);
-        
-        internal delegate ulong OnTell(ulong file);
-        
-        internal delegate ulong OnLength(ulong file);
-        
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate IntPtr OnOpen(string path);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate void OnClose(IntPtr file);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal unsafe delegate ulong OnRead(byte* buffer, uint size, IntPtr file);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate bool OnSeek(IntPtr file, uint offset, int origin);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate ulong OnTell(IntPtr file);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate ulong OnLength(IntPtr file);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate string OnLoadFile(string path);
     }
 }
