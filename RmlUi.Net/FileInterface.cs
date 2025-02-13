@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 namespace RmlUiNet
 {
@@ -35,25 +36,21 @@ namespace RmlUiNet
             ManuallyRegisterCache(NativePtr, this);
         }
 
-        internal unsafe ulong _Read(byte* buffer, ulong size, ulong file)
+        internal unsafe ulong _Read(byte* buffer, uint size, IntPtr file)
         {
-            byte[] bytes = new byte[size];
-            var len = Read(bytes, size, file);
+            var len = Read(size, file, out byte[] bytes);
 
-            for (var i = 0; i < (int)len; i++)
-            {
-                buffer[i] = bytes[i];
-            }
+            Marshal.Copy(bytes, 0, (IntPtr)buffer, (int)len);
 
             return len;
         }
 
-        public abstract ulong Open(string path);
-        public abstract void Close(ulong file);
-        public abstract ulong Read(byte[] buffer, ulong size, ulong file);
-        public abstract bool Seek(ulong file, long offset, int origin);
-        public abstract ulong Tell(ulong file);
-        public abstract ulong Length(ulong file);
+        public abstract IntPtr Open(string path);
+        public abstract void Close(IntPtr file);
+        public abstract ulong Read(ulong size, IntPtr file, out byte[] bytes);
+        public abstract bool Seek(IntPtr file, uint offset, int origin);
+        public abstract ulong Tell(IntPtr file);
+        public abstract ulong Length(IntPtr file);
         public abstract string LoadFile(string path);
     }
 }
